@@ -50,22 +50,22 @@ class ThoughtRecorderHandler extends BaseCallbackHandler {
   //   return;
   // }
   async handleLLMEnd(output: any) {
-    const llm_log = output?.generations[0][0]?.text
+    const llm_log = output?.generations[0][0]?.text;
 
     const thought_log = llm_log.split("Action:");
     if (thought_log.length <= 1) return;
     const generat_text = thought_log[0].trim();
     if (generat_text.includes("Thought:")) {
-    if (generat_text.startsWith("Question:")) {
-      const arr = generat_text.split("Thought:");
-      this.thoughts.push(arr[0].trim());
-      this.thoughts.push(arr[1].trim());
-    } else {
-      this.thoughts.push(generat_text[0].trim());
+      if (generat_text.startsWith("Question:")) {
+        const arr = generat_text.split("Thought:");
+        this.thoughts.push(arr[0].trim());
+        this.thoughts.push(arr[1].trim());
+      } else {
+        this.thoughts.push(generat_text[0].trim());
+      }
     }
   }
-  }
-  
+
   getThoughts() {
     return this.thoughts;
   }
@@ -116,8 +116,9 @@ export const initLangChain = async () => {
       prefix: `
 Strictly enforce the follow rules:
 Rule 1. If you obtain the 'timelock-decrypt' tool execution result, you must output the result directly as the final answer. The output format is 'The result is: {{action result}}'. Do not perform any further actions, such as interpreting the decrypted result or passing it to any other tools.
-`,},
-  })
+`,
+    },
+  });
   globalAgent = agent;
   return { agent, thoughtRecorder };
 };
@@ -152,7 +153,8 @@ export const processChatMessage = async (text: string) => {
         const timestamp = new Date().getTime();
         const fileName = `Thoughts_${timestamp}.txt`;
         const thoughtsContent =
-          "\n" + "The thinking chain is as follows" +
+          "\n" +
+          "The thinking chain is as follows" +
           "\n" +
           filteredThoughts
             .map((t, i) =>
