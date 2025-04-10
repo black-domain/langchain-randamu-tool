@@ -2,14 +2,22 @@
 
 ## Features
 
-**1. Encrypting Specified Text with Timelock**
+**1. Agent Thought Chain**
+
+Any conversation with the agent, the internal thought chain will be recorded.
+
+**2. Encrypting Specified Text with Timelock**
+
 The agent can utilize the timelock encryption tool to encrypt specified text. You may also set the desired encryption duration; if not specified, the default duration is 5 minutes.
 
-**2. Automatic Encryption of Thought Chain**
+**3. Automatic Encryption of Thought Chain**
+
 Upon the conclusion of a conversation, the agent's thought chain is automatically encrypted with a 5-minute timelock and saved locally as a txt file.
 
-**3. Decrypting the Cipertext**
+**4. Decrypting the Cipertext**
+
 When it's time to decrypt, you can provide the ciphertext to the agent or upload the thought chain's ciphertext file (only .txt files are permitted). The agent will then use the timelock decryption tool to decrypt the content. 
+
 *(Please note that if the specified decryption time has not yet been reached, decryption will not be successful.)*
 
 ## Core Dependencies
