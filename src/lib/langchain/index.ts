@@ -31,23 +31,39 @@ class ThoughtRecorderHandler extends BaseCallbackHandler {
     this.currentThought = "";
   }
 
-  async handleAgentAction(action: any) {
-    const tool = action.tool;
-    const input = action.toolInput;
-    const otherLog = action.log.split("Action:");
-    if (otherLog.length <= 1) return;
-    const log = otherLog[0].trim();
-    if (log.startsWith("Question:")) {
-      const arr = log.split("Thought:");
+  // async handleAgentAction(action: any) {
+  //   const tool = action.tool;
+  //   const input = action.toolInput;
+  //   const otherLog = action.log.split("Action:");
+  //   if (otherLog.length <= 1) return;
+  //   const log = otherLog[0].trim();
+  //   if (log.startsWith("Question:")) {
+  //     const arr = log.split("Thought:");
+  //     // this.thoughts.push(arr[0].trim());
+  //     this.thoughts.push(arr[1].trim());
+  //   } else {
+  //     if (!this.thoughts.includes(log)) {
+  //       this.thoughts.push(log);
+  //     }
+  //   }
+  //   this.toolCalls.push({ tool, input });
+  //   return;
+  // }
+  async handleLLMEnd(output: any) {
+    const llm_log = output?.generations[0][0]?.text
+
+    const thought_log = llm_log.split("Action:");
+    if (thought_log.length <= 1) return;
+    const generat_text = thought_log[0].trim();
+    if (generat_text.includes("Thought:")) {
+    if (generat_text.startsWith("Question:")) {
+      const arr = generat_text.split("Thought:");
       this.thoughts.push(arr[0].trim());
       this.thoughts.push(arr[1].trim());
     } else {
-      if (!this.thoughts.includes(log)) {
-        this.thoughts.push(log);
-      }
+      this.thoughts.push(generat_text[0].trim());
     }
-    this.toolCalls.push({ tool, input });
-    return;
+  }
   }
   
   getThoughts() {
@@ -71,6 +87,7 @@ export const initLangChain = async () => {
       baseURL: OPENAI_BASE_URL,
     },
     streaming: true,
+    callbacks: [thoughtRecorder],
   });
   const memory = new ConversationSummaryBufferMemory({
     returnMessages: true,
